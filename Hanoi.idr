@@ -1,12 +1,12 @@
 module Main
 
-import Data.Fin
+import Data.Vect
 
 Disposition : Type
-Disposition = List (Fin 3)
+Disposition = Vect 4 (Fin 3)
 
 exampleDisposition : Disposition
-exampleDisposition = [0, 1, 2]
+exampleDisposition = [0, 1, 2, 0]
 
 -- fourthPegDisposition : Disposition
 -- fourthPegDisposition = [0, 1, 2, 3]
