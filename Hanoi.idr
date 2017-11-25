@@ -32,4 +32,6 @@ move from to (smallestDiskPosition :: restOfTheDisposition) =
     then Nothing
     else if to == smallestDiskPosition
         then Nothing
-        else ?e
+        else if from == smallestDiskPosition
+            then Just (to :: restOfTheDisposition)
+            else map (smallestDiskPosition ::) (move from to restOfTheDisposition)
