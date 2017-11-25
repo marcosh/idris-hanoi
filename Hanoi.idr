@@ -54,3 +54,6 @@ move' : (from : Peg) ->
     (disposition : Disposition n) ->
     {auto justPrf : IsJust (move from to disposition)} ->
     Disposition n
+move' from to disposition with (move from to disposition)
+    | Just newDisposition = newDisposition
+    | Nothing impossible
