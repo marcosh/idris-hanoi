@@ -2,10 +2,10 @@ module Main
 
 import Data.Vect
 
-Disposition : Type
-Disposition = Vect 4 (Fin 3)
+Disposition : Nat -> Type
+Disposition numberOfDisks = Vect numberOfDisks (Fin 3)
 
-exampleDisposition : Disposition
+exampleDisposition : Disposition 4
 exampleDisposition = [0, 1, 2, 0]
 
 -- fourthPegDisposition : Disposition
