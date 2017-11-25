@@ -13,5 +13,8 @@ Disposition numberOfDisks = Vect numberOfDisks Peg
 exampleDisposition : Disposition 4
 exampleDisposition = [First, Second, Third, First]
 
--- fourthPegDisposition : Disposition
--- fourthPegDisposition = [0, 1, 2, 3]
+startingDisposition : Disposition n
+startingDisposition = replicate _ First
+
+winningDisposition : Disposition n
+winningDisposition = replicate _ Second
