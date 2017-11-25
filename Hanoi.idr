@@ -7,6 +7,12 @@ data Peg
     | Second
     | Third
 
+Eq Peg where
+    First == First = True
+    Second == Second = True
+    Third == Third = True
+    _ == _ = False
+
 Disposition : Nat -> Type
 Disposition numberOfDisks = Vect numberOfDisks Peg
 
@@ -21,4 +27,7 @@ winningDisposition = replicate _ Second
 
 move : Peg -> Peg -> Disposition n -> Maybe (Disposition n)
 move from to [] = Nothing
-move from to (x :: xs) = ?move_rhs_2
+move from to (smallestDiskPosition :: restOfTheDisposition) =
+    if from == to
+    then Nothing
+    else ?e
