@@ -20,4 +20,5 @@ winningDisposition : Disposition n
 winningDisposition = replicate _ Second
 
 move : Peg -> Peg -> Disposition n -> Maybe (Disposition n)
-move from to startDisposition = ?move_rhs
+move from to [] = Nothing
+move from to (x :: xs) = ?move_rhs_2
