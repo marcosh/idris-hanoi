@@ -66,6 +66,43 @@ twoDisksOnDifferentPegsTest = Refl
 threeDisksTest : perPegRepresentation [First, Second, Third] = [[FS (FS FZ)], [FS FZ], [FZ]]
 threeDisksTest = Refl
 
+-- draw Hanoi Tower
+finToNatProof : (n: Nat) -> Fin n -> (m: Nat ** LTE m n)
+finToNatProof (S k) FZ = (0 ** LTEZero)
+finToNatProof (S k) (FS x) = let prev = finToNatProof k x in
+    (S (fst prev) ** (LTESucc (snd prev)))
+
+diskLength : (n: Nat) -> Fin n -> Nat
+diskLength totalDiskNumber disk = let diskAsNatWithProof = finToNatProof totalDiskNumber disk in
+    (-) totalDiskNumber (fst diskAsNatWithProof) {smaller = snd diskAsNatWithProof}
+
+drawDisk : (n: Nat) -> Fin n -> String
+drawDisk totalDiskNumber disk = let margin = replicate (finToNat disk) " " in
+    concat $ margin ++ (Prelude.List.replicate (2 * (diskLength totalDiskNumber disk) + 1) "_") ++ margin
+
+addEmptyLines : (n : Nat) -> List String -> List String
+addEmptyLines n xs = if (length xs < n)
+    then addEmptyLines n $ concat (Prelude.List.replicate (2 * n + 1) " ") :: xs
+    else xs
+
+drawPeg : (n: Nat) -> List (Fin n) -> List String
+drawPeg totalDiskNumber disks = addEmptyLines totalDiskNumber $ map (drawDisk totalDiskNumber) disks
+
+concat3 : String -> String -> String -> String
+concat3 x y z = x ++ y ++ z
+
+drawHanoiTower : (n: Nat) -> Vect 3 (List (Fin n)) -> String
+drawHanoiTower diskNumber [firstPeg, secondPeg, thirdPeg] =
+    let
+        drawFirstPeg = drawPeg diskNumber firstPeg
+        drawSecondPeg = drawPeg diskNumber secondPeg
+        drawThirdPeg = drawPeg diskNumber thirdPeg
+    in
+        unlines $ zipWith3 concat3 drawFirstPeg drawSecondPeg drawThirdPeg
+
+draw : Disposition n -> String
+draw {n} = (drawHanoiTower n) . perPegRepresentation
+
 move : (from : Peg) -> (to : Peg) -> {auto prf : (from /= to) = True} -> Disposition n -> Maybe (Disposition n)
 move from to [] = Nothing
 move from to (smallestDiskPosition :: restOfTheDisposition) =
