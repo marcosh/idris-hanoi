@@ -1,6 +1,8 @@
 module Main
 
 import Data.Vect
+import Effects
+import Effect.StdIO
 
 data Peg
     = First
@@ -123,8 +125,8 @@ moveSecondDisk = Refl
 -- moveSamePeg : move First First [First, First, First] = Nothing
 -- moveSamePeg = Refl
 
-wrongMove : move Second Third [First, First, Third] = Nothing
-wrongMove = Refl
+-- wrongMove : move Second Third [First, First, Third] = Nothing
+-- wrongMove = Refl
 
 move' : (from : Peg) ->
     (to : Peg) ->
@@ -135,3 +137,62 @@ move' : (from : Peg) ->
 move' from to disposition with (move from to disposition)
     | Just newDisposition = newDisposition
     | Nothing impossible
+
+parseInput : String -> Maybe Int
+parseInput input = toMaybe (all isDigit (unpack input)) (cast input)
+
+parseInputToPeg : String -> Maybe Peg
+parseInputToPeg input = (parseInput input) >>= intToPeg
+
+readPegFromConsole : String -> Eff Peg [STDIO]
+readPegFromConsole string = do
+    putStrLn string
+    let maybePeg = parseInputToPeg !getStr
+    case maybePeg of
+        Nothing => do
+            putStrLn "Wrong input. Please enter 1, 2 or 3"
+            readPegFromConsole $ string
+        Just peg => do
+            putStrLn $ "You chose peg: " ++ show peg
+            pure peg
+
+differ : (a: Peg) -> (b: Peg) -> Maybe ((a /= b) = True)
+differ a b with (a /= b)
+  | True = Just Refl
+  | False = Nothing
+
+moveIsJust : (from : Peg) ->
+    (to : Peg) ->
+    {auto prf: (from /= to) = True} ->
+    (disposition: Disposition n) ->
+    Maybe (IsJust (move from to disposition))
+moveIsJust from to disposition with (move from to disposition)
+    | Nothing = Nothing
+    | Just newDisposition = Just ItIsJust
+
+mutual
+    wrongMove : Disposition n -> Disposition n -> String -> Eff () [STDIO]
+    wrongMove startDisposition winningDisposition message = do
+        putStrLn message
+        play startDisposition winningDisposition
+
+    play : Disposition n -> Disposition n -> Eff () [STDIO]
+    play {n} startDisposition winningDisposition = do
+        putStrLn $ draw startDisposition
+        from <- readPegFromConsole "From"
+        to <- readPegFromConsole "To"
+        case (differ from to) of
+            Nothing => wrongMove startDisposition winningDisposition "Invalid move: from and to are equal"
+            Just prf => do
+                case (moveIsJust from to startDisposition) of
+                    Nothing => wrongMove startDisposition winningDisposition "Invalid move. Try again"
+                    Just justPrf => do
+                        let newDisposition = move' from to startDisposition
+                        if (newDisposition == winningDisposition)
+                            then do
+                                putStrLn $ draw newDisposition
+                                putStrLn "You made it!!"
+                            else play newDisposition winningDisposition
+
+main : IO ()
+main = run $ play (startingDisposition {n=3}) (winningDisposition {n=3})
