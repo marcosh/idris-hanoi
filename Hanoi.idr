@@ -18,3 +18,6 @@ startingDisposition = replicate _ First
 
 winningDisposition : Disposition n
 winningDisposition = replicate _ Second
+
+move : Peg -> Peg -> Disposition n -> Maybe (Disposition n)
+move from to startDisposition = ?move_rhs
