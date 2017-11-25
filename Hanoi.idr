@@ -30,4 +30,6 @@ move from to [] = Nothing
 move from to (smallestDiskPosition :: restOfTheDisposition) =
     if from == to
     then Nothing
-    else ?e
+    else if to == smallestDiskPosition
+        then Nothing
+        else ?e
