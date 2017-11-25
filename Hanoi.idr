@@ -25,25 +25,25 @@ startingDisposition = replicate _ First
 winningDisposition : Disposition n
 winningDisposition = replicate _ Second
 
-move : (from : Peg) -> (to : Peg) -> (from /= to) = True -> Disposition n -> Maybe (Disposition n)
-move from to prf [] = Nothing
-move from to prf (smallestDiskPosition :: restOfTheDisposition) =
+move : (from : Peg) -> (to : Peg) -> {auto prf : (from /= to) = True} -> Disposition n -> Maybe (Disposition n)
+move from to [] = Nothing
+move from to (smallestDiskPosition :: restOfTheDisposition) =
     if from == to
     then Nothing
     else if to == smallestDiskPosition
         then Nothing
         else if from == smallestDiskPosition
             then Just (to :: restOfTheDisposition)
-            else map (smallestDiskPosition ::) (move from to prf restOfTheDisposition)
+            else map (smallestDiskPosition ::) (move from to restOfTheDisposition)
 
-moveFirstToSecond : move First Second Refl [First, First, First] = Just [Second, First, First]
+moveFirstToSecond : move First Second [First, First, First] = Just [Second, First, First]
 moveFirstToSecond = Refl
 
-moveSecondDisk : move Second Third Refl [First, Second, Third] = Just [First, Third, Third]
+moveSecondDisk : move Second Third [First, Second, Third] = Just [First, Third, Third]
 moveSecondDisk = Refl
 
--- moveSamePeg : move First First Refl [First, First, First] = Nothing
+-- moveSamePeg : move First First [First, First, First] = Nothing
 -- moveSamePeg = Refl
 
-wrongMove : move Second Third Refl [First, First, Third] = Nothing
+wrongMove : move Second Third [First, First, Third] = Nothing
 wrongMove = Refl
