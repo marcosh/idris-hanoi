@@ -47,3 +47,10 @@ moveSecondDisk = Refl
 
 wrongMove : move Second Third [First, First, Third] = Nothing
 wrongMove = Refl
+
+move' : (from : Peg) ->
+    (to : Peg) ->
+    {auto prf : (from /= to) = True} ->
+    (disposition : Disposition n) ->
+    {auto justPrf : IsJust (move from to disposition)} ->
+    Disposition n
