@@ -35,3 +35,15 @@ move from to (smallestDiskPosition :: restOfTheDisposition) =
         else if from == smallestDiskPosition
             then Just (to :: restOfTheDisposition)
             else map (smallestDiskPosition ::) (move from to restOfTheDisposition)
+
+moveFirstToSecond : move First Second [First, First, First] = Just [Second, First, First]
+moveFirstToSecond = Refl
+
+moveSecondDisk : move Second Third [First, Second, Third] = Just [First, Third, Third]
+moveSecondDisk = Refl
+
+moveSamePeg : move First First [First, First, First] = Nothing
+moveSamePeg = Refl
+
+wrongMove : move Second Third [First, First, Third] = Nothing
+wrongMove = Refl
