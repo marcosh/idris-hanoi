@@ -15,3 +15,13 @@ and then play it using
 ```
 ./hanoi
 ```
+
+### IN THE BROWSER
+
+You can compile it with
+
+```
+idris Hanoi.idr -p effects -o hanoi.js --codegen javascript
+```
+
+and open `hanoi.html` to play the game in the browser console
